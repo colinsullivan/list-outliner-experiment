@@ -15,11 +15,12 @@ class BulletListItemEditor extends React.Component {
     // handle return key differently
     if (e.key === 'Enter') {
       e.preventDefault();
+      this.props.createChildListItem(this.props.item.get('parent'));
     }
   }
   render () {
     let containerStyle = {
-      marginLeft: this.props.item.hierarchy + 'em'
+      marginLeft: this.props.item.get('hierarchy') + 'em'
     };
     return (
       <div style={containerStyle}>
@@ -32,8 +33,12 @@ class BulletListItemEditor extends React.Component {
           </span>
         </div>
         <div>
-          {this.props.item.children.map((bulletListItem, i) => {
-            return <BulletListItemEditor key={i} item={bulletListItem} />;
+          {this.props.item.get('children').map((bulletListItem, i) => {
+            return <BulletListItemEditor
+              key={i}
+              item={bulletListItem}
+              createChildListItem={this.props.createChildListItem}
+            />;
           })}
         </div>
       </div>
