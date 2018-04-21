@@ -15,7 +15,12 @@ class BulletListItemEditor extends React.Component {
     // handle return key differently
     if (e.key === 'Enter') {
       e.preventDefault();
-      this.props.createChildListItem(this.props.item.get('parent'));
+      this.props.addSiblingListItem(this.props.item);
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      console.log("this.props.item");
+      console.log(this.props.item.toJSON());
+      this.props.increaseHierarchy(this.props.item);
     }
   }
   render () {
@@ -31,15 +36,6 @@ class BulletListItemEditor extends React.Component {
             onKeyDown={this.handleKeyDown.bind(this)}
           >
           </span>
-        </div>
-        <div>
-          {this.props.item.get('children').map((bulletListItem, i) => {
-            return <BulletListItemEditor
-              key={i}
-              item={bulletListItem}
-              createChildListItem={this.props.createChildListItem}
-            />;
-          })}
         </div>
       </div>
     );

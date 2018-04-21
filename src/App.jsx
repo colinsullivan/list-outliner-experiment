@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
-import Immutable from 'immutable';
 
-import { createBulletListItem } from './model';
+import {
+  createBulletList,
+  addSibling,
+  increaseHierarchy
+} from './model';
 import BulletListItemEditor from './BulletListItemEditor.jsx';
 
 
@@ -15,11 +18,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      tree: Immutable.Map({
-        hierarchy: -1,
-        children: Immutable.List([]),
-        parent: null
-      }),
+      tree: createBulletList(),
       dragState: DRAG_STATES.NONE,
       dragStart: {x: 0, y: 0},
       mousePosition: {x: 0, y: 0}
@@ -27,40 +26,20 @@ class App extends Component {
 
   }
   /**
-   *  On init, create a first list item.
-   **/
-  componentDidMount () {
-    this.createChildListItem(this.state.tree);
-  }
-  /**
-   *  Given a list item in our tree, return the key path for it.
-   **/
-  getKeyPath (bulletListItem) {
-    var keyPath = ['children'];
-    var item = bulletListItem;
-    var parent = bulletListItem.get('parent');
-    while (parent) {
-      keyPath = [parent.get('children').keyOf(item)] + keyPath;
-      item = parent;
-      parent = item.get('parent');
-    }
-    return keyPath;
-  }
-
-  /**
    *  Given a list item, add a child element
    **/
-  createChildListItem (parent) {
-    let newItem = createBulletListItem(parent.get('hierarchy') + 1, parent);
-    let parentKeyPath = this.getKeyPath(parent);
-
+  addSiblingListItem (sibling) {
     this.setState({
-      tree: this.state.tree.updateIn(
-        parentKeyPath,
-        children => children.push(newItem)
-      )
+      tree: addSibling(this.state.tree, sibling)
     });
   }
+
+  increaseHierarchy (item) {
+    this.setState({
+      tree: increaseHierarchy(this.state.tree, item)
+    });
+  }
+
   render() {
     return (
       <div className="App">
@@ -69,11 +48,12 @@ class App extends Component {
         </header>
 
         <section className="listEditor">
-          {this.state.tree.get('children').map((bulletListItem, i) => {
+          {this.state.tree.map((bulletListItem, i) => {
             return <BulletListItemEditor
               key={i}
               item={bulletListItem}
-              createChildListItem={this.createChildListItem.bind(this)}
+              addSiblingListItem={this.addSiblingListItem.bind(this)}
+              increaseHierarchy={this.increaseHierarchy.bind(this)}
             />;
           })}
         </section>
