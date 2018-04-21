@@ -62,3 +62,9 @@ export function deselectItem (list, item) {
     selected => false
   );
 }
+
+export function deselectAll (list) {
+  return list.map(function (item) {
+    return item.update('isSelected', isSelected => false);
+  });
+}

@@ -7,7 +7,8 @@ import {
   increaseHierarchy,
   decreaseHierarchy,
   selectItem,
-  deselectItem
+  deselectItem,
+  deselectAll
 } from './model';
 import { DRAG_STATES } from './constants'
 import BulletListItemEditor from './BulletListItemEditor.jsx';
@@ -98,9 +99,14 @@ class App extends Component {
    **/
   handleMouseUp () {
     console.log("handleMouseUp");
-    this.setState({
+    let newState = {
       dragState: DRAG_STATES.NONE
-    });
+    };
+    if (this.state.dragState === DRAG_STATES.STARTING_NEW_SELECTION_BOX) {
+      // this means a click happened in the empty space
+      newState.tree = deselectAll(this.state.tree);
+    }
+    this.setState(newState);
   }
 
   /**

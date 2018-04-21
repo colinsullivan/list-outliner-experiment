@@ -8,7 +8,8 @@ import {
   increaseHierarchy,
   decreaseHierarchy,
   selectItem,
-  deselectItem
+  deselectItem,
+  deselectAll
 } from './model';
 
 it('renders without crashing', () => {
@@ -57,5 +58,20 @@ it("should select and deselect items properly", function () {
   list = selectItem(list, list.get(1));
   expect(list.getIn([1, 'isSelected'])).toEqual(true);
   list = deselectItem(list, list.get(1));
+  expect(list.getIn([1, 'isSelected'])).toEqual(false);
+});
+
+it("should deselect all", function () {
+  var list = createBulletList();
+
+  list = addSibling(list, list.get(0));
+
+  list = selectItem(list, list.get(0));
+  list = selectItem(list, list.get(1));
+  expect(list.getIn([0, 'isSelected'])).toEqual(true);
+  expect(list.getIn([1, 'isSelected'])).toEqual(true);
+  
+  list = deselectAll(list);
+  expect(list.getIn([0, 'isSelected'])).toEqual(false);
   expect(list.getIn([1, 'isSelected'])).toEqual(false);
 });
