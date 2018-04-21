@@ -17,7 +17,9 @@ class App extends Component {
       dragState: DRAG_STATES.NONE,
       dragStart: {x: 0, y: 0},
       mousePosition: {x: 0, y: 0}
-    }
+    };
+
+    this.state.children[0].children.push(createBulletListItem(1, "hello again!"));
   }
   render() {
     return (

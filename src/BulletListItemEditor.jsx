@@ -12,8 +12,11 @@ import React from 'react';
 
 class BulletListItemEditor extends React.Component {
   render () {
+    let containerStyle = {
+      marginLeft: this.props.item.hierarchy + 'em'
+    };
     return (
-      <div>
+      <div style={containerStyle}>
         <div>
           <span>•</span><span>{this.props.item.content}</span>
         </div>
