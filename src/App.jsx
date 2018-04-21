@@ -5,7 +5,9 @@ import {
   createBulletList,
   addSibling,
   increaseHierarchy,
-  decreaseHierarchy
+  decreaseHierarchy,
+  selectItem,
+  deselectItem
 } from './model';
 import { DRAG_STATES } from './constants'
 import BulletListItemEditor from './BulletListItemEditor.jsx';
@@ -22,7 +24,13 @@ class App extends Component {
       dragState: DRAG_STATES.NONE,
       dragStart: {x: 0, y: 0},
       mousePosition: {x: 0, y: 0},
-      shiftIsDown: false
+      shiftIsDown: false,
+      selectionBox: {
+        top: 0,
+        left: 0,
+        height: 0,
+        width: 0
+      }
     };
 
   }
@@ -103,12 +111,41 @@ class App extends Component {
       mousePosition: {
         x: e.pageX,
         y: e.pageY
-      }
+      },
+      dragState: this.state.dragState
     };
-    if (this.state.dragState === DRAG_STATES.STARTING_NEW_SELECTION_BOX) {
-      newState.dragState = DRAG_STATES.NEW_SELECTION_BOX;
-    } else if (this.state.dragState === DRAG_STATES.STARTING_MOVE_SELECTION) {
-      newState.dragState = DRAG_STATES.MOVE_SELECTION;
+
+    switch (this.state.dragState) {
+      case DRAG_STATES.STARTING_NEW_SELECTION_BOX:
+        // if we just started a selection, now we will continue it
+        newState.dragState = DRAG_STATES.NEW_SELECTION_BOX;
+        break;
+
+      case DRAG_STATES.STARTING_MOVE_SELECTION:
+        newState.dragState = DRAG_STATES.MOVE_SELECTION;
+        break;
+
+      case DRAG_STATES.NEW_SELECTION_BOX:
+        newState.selectionBox = {
+          top: Math.min(
+            this.state.mousePosition.y,
+            this.state.dragStart.y
+          ),
+          left: Math.min(
+            this.state.mousePosition.x,
+            this.state.dragStart.x
+          ),
+          height: Math.abs(
+            this.state.mousePosition.y - this.state.dragStart.y
+          ),
+          width: Math.abs(
+            this.state.mousePosition.x - this.state.dragStart.x
+          )
+        };
+        break;
+      
+      default:
+        break;
     }
     this.setState(newState);
   }
@@ -127,8 +164,42 @@ class App extends Component {
     });
   }
 
-  handleItemMouseMove (e) {
-    
+  handleItemMouseMove (e, item) {
+    if (this.state.dragState === DRAG_STATES.NEW_SELECTION_BOX) {
+      // if we are dragging a selection box and passed over an item
+      let bounds = e.currentTarget.getBoundingClientRect();
+
+      console.log("bounds");
+      console.log(bounds);
+      console.log("this.state.selectionBox");
+      console.log(this.state.selectionBox);
+
+      // is list item inside selection box
+      if (
+        (bounds.top > this.state.selectionBox.top
+          && bounds.top < (
+            this.state.selectionBox.top
+            + this.state.selectionBox.height
+          ))
+        || (
+          bounds.bottom > this.state.selectionBox.top
+          && bounds.bottom < (
+            this.state.selectionBox.top
+            + this.state.selectionBox.height
+          )
+        )
+      ) {
+        // mark item as selected
+        this.setState({
+          tree: selectItem(this.state.tree, item)
+        });
+      } else {
+        // mark item as deselected
+        this.setState({
+          tree: deselectItem(this.state.tree, item)
+        });
+      }
+    }
   }
 
   render() {
@@ -143,8 +214,10 @@ class App extends Component {
         </header>
         <NewSelectionBox
           dragState={this.state.dragState}
-          dragStart={this.state.dragStart}
-          mousePosition={this.state.mousePosition}
+          top={this.state.selectionBox.top}
+          left={this.state.selectionBox.left}
+          height={this.state.selectionBox.height}
+          width={this.state.selectionBox.width}
         />
         <section className="listEditor">
           {this.state.tree.map((bulletListItem, i) => {

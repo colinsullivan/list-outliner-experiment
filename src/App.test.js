@@ -2,7 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-import { createBulletList, addSibling, increaseHierarchy, decreaseHierarchy } from './model';
+import {
+  createBulletList,
+  addSibling,
+  increaseHierarchy,
+  decreaseHierarchy,
+  selectItem,
+  deselectItem
+} from './model';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
@@ -40,4 +47,15 @@ it("should deindent an item properly", function () {
   // shouldn't deindent past 0
   list = decreaseHierarchy(list, list.get(1));
   expect(list.getIn([1, 'hierarchy'])).toEqual(0);
+});
+
+it("should select and deselect items properly", function () {
+  var list = createBulletList();
+
+  list = addSibling(list, list.get(0));
+
+  list = selectItem(list, list.get(1));
+  expect(list.getIn([1, 'isSelected'])).toEqual(true);
+  list = deselectItem(list, list.get(1));
+  expect(list.getIn([1, 'isSelected'])).toEqual(false);
 });

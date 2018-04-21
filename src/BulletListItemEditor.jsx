@@ -33,7 +33,7 @@ class BulletListItemEditor extends React.Component {
     this.props.handleItemMouseDown(this.props.item);
   }
   handleMouseMove (e) {
-    this.props.handleItemMouseMove(this.props.item);
+    this.props.handleItemMouseMove(e, this.props.item);
   }
   componentDidMount () {
     // could be considered a hack, since we are using contenteditable,
@@ -47,14 +47,22 @@ class BulletListItemEditor extends React.Component {
       paddingLeft: '3em',
       paddingRight: '3em'
     };
+    let innerItemStyle = {
+    };
+    if (this.props.item.get('isSelected')) {
+      innerItemStyle.backgroundColor = 'rgba(176, 196, 222, 0.5)';
+    }
     return (
-      <div style={containerStyle} onMouseDown={this.handleMouseDown.bind(this)}>
-        <div>
+      <div
+        style={containerStyle}
+        onMouseDown={this.handleMouseDown.bind(this)}
+        onMouseMove={this.handleMouseMove.bind(this)}
+      >
+        <div style={innerItemStyle}>
           <span>•</span>
           <span
             contentEditable="true"
             onKeyDown={this.handleKeyDown.bind(this)}
-            onMouseMove={this.handleMouseMove.bind(this)}
             ref={(el) => this.listContentElement = el }
           >
           </span>

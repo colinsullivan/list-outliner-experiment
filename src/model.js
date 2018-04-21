@@ -46,3 +46,19 @@ export function decreaseHierarchy (list, item) {
     hierarchy => Math.max(0, hierarchy - 1)
   );
 }
+
+export function selectItem (list, item) {
+  let itemIndex = findItemIndex(list, item);
+  return list.updateIn(
+    [itemIndex, 'isSelected'],
+    selected => true
+  );
+}
+
+export function deselectItem (list, item) {
+  let itemIndex = findItemIndex(list, item);
+  return list.updateIn(
+    [itemIndex, 'isSelected'],
+    selected => false
+  );
+}
