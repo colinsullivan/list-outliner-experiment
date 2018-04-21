@@ -11,6 +11,13 @@
 import React from 'react';
 
 class BulletListItemEditor extends React.Component {
+  constructor (props) {
+    super(props);
+
+    // a reference to the DOM element used for displaying the list item
+    // content.
+    this.listContentElement = null;
+  }
   handleKeyDown (e) {
     // handle return key differently
     if (e.key === 'Enter') {
@@ -18,10 +25,14 @@ class BulletListItemEditor extends React.Component {
       this.props.addSiblingListItem(this.props.item);
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      console.log("this.props.item");
-      console.log(this.props.item.toJSON());
       this.props.increaseHierarchy(this.props.item);
     }
+  }
+  componentDidMount () {
+    // could be considered a hack, since we are using contenteditable,
+    // simply call focus on the list item DOM element when it is created
+    // to put the cursor there
+    this.listContentElement.focus();
   }
   render () {
     let containerStyle = {
@@ -34,6 +45,7 @@ class BulletListItemEditor extends React.Component {
           <span
             contentEditable="true"
             onKeyDown={this.handleKeyDown.bind(this)}
+            ref={(el) => this.listContentElement = el }
           >
           </span>
         </div>
