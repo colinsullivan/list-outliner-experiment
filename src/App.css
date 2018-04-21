@@ -4,7 +4,7 @@ html, .App, body, div#root {
   width: 100%;
 }
 section.listEditor {
-  margin: 3em;
+  margin-top: 3em;
 }
 .App-logo {
   animation: App-logo-spin infinite 20s linear;

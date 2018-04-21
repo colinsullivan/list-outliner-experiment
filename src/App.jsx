@@ -99,12 +99,18 @@ class App extends Component {
    *  When mouse is moved while dragging
    **/
   handleDrag (e) {
-    this.setState({
+    let newState = {
       mousePosition: {
         x: e.pageX,
         y: e.pageY
       }
-    });
+    };
+    if (this.state.dragState === DRAG_STATES.STARTING_NEW_SELECTION_BOX) {
+      newState.dragState = DRAG_STATES.NEW_SELECTION_BOX;
+    } else if (this.state.dragState === DRAG_STATES.STARTING_MOVE_SELECTION) {
+      newState.dragState = DRAG_STATES.MOVE_SELECTION;
+    }
+    this.setState(newState);
   }
 
   // if this mousedown handler was called, it means the mouse
@@ -112,14 +118,17 @@ class App extends Component {
   // we can assume it started on the outer canvas and the
   // user intent is to drag a selection box
   handleAppMouseDown (e) {
-    console.log("app mousedown");
     this.setState({
-      dragState: DRAG_STATES.NEW_SELECTION_BOX,
+      dragState: DRAG_STATES.STARTING_NEW_SELECTION_BOX,
       dragStart: {
         x: e.pageX,
         y: e.pageY
       }
     });
+  }
+
+  handleItemMouseMove (e) {
+    
   }
 
   render() {
@@ -145,6 +154,7 @@ class App extends Component {
               addSiblingListItem={this.addSiblingListItem.bind(this)}
               handleTabPressed={this.handleTabPressed.bind(this)}
               handleItemMouseDown={this.handleItemMouseDown.bind(this)}
+              handleItemMouseMove={this.handleItemMouseMove.bind(this)}
             />;
           })}
         </section>
