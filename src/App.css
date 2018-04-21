@@ -1,3 +1,8 @@
+
+html, .App, body, div#root {
+  height: 100%;
+  width: 100%;
+}
 section.listEditor {
   margin: 3em;
 }

@@ -28,6 +28,10 @@ class BulletListItemEditor extends React.Component {
       this.props.handleTabPressed(this.props.item);
     }
   }
+  handleMouseDown (e) {
+    e.stopPropagation();
+    this.props.handleItemMouseDown(this.props.item);
+  }
   componentDidMount () {
     // could be considered a hack, since we are using contenteditable,
     // simply call focus on the list item DOM element when it is created
@@ -39,7 +43,7 @@ class BulletListItemEditor extends React.Component {
       marginLeft: this.props.item.get('hierarchy') + 'em'
     };
     return (
-      <div style={containerStyle}>
+      <div style={containerStyle} onMouseDown={this.handleMouseDown.bind(this)}>
         <div>
           <span>•</span>
           <span
