@@ -25,7 +25,7 @@ class BulletListItemEditor extends React.Component {
       this.props.addSiblingListItem(this.props.item);
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      this.props.increaseHierarchy(this.props.item);
+      this.props.handleTabPressed(this.props.item);
     }
   }
   componentDidMount () {

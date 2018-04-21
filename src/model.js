@@ -25,13 +25,24 @@ export function addSibling (list, item) {
     newItem
   );
 }
-export function increaseHierarchy (list, item) {
-  let itemIndex = list.findIndex(function (listItem) {
+function findItemIndex (list, item) {
+  return list.findIndex(function (listItem) {
     return item === listItem;
   });
+}
+export function increaseHierarchy (list, item) {
+  let itemIndex = findItemIndex(list, item);
   
   return list.updateIn(
     [itemIndex, 'hierarchy'],
     hierarchy => hierarchy + 1
+  );
+}
+export function decreaseHierarchy (list, item) {
+  let itemIndex = findItemIndex(list, item);
+  
+  return list.updateIn(
+    [itemIndex, 'hierarchy'],
+    hierarchy => Math.max(0, hierarchy - 1)
   );
 }
