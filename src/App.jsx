@@ -13,13 +13,13 @@ class App extends Component {
     super(props);
 
     this.state = {
-      children: [createBulletListItem(0, "hello world")],
+      children: [createBulletListItem(0)],
       dragState: DRAG_STATES.NONE,
       dragStart: {x: 0, y: 0},
       mousePosition: {x: 0, y: 0}
     };
 
-    this.state.children[0].children.push(createBulletListItem(1, "hello again!"));
+    this.state.children[0].children.push(createBulletListItem(1));
   }
   render() {
     return (
@@ -29,8 +29,8 @@ class App extends Component {
         </header>
 
         <section className="listEditor">
-          {this.state.children.map((bulletListItem) => {
-            return <BulletListItemEditor item={bulletListItem} />;
+          {this.state.children.map((bulletListItem, i) => {
+            return <BulletListItemEditor key={i} item={bulletListItem} />;
           })}
         </section>
 

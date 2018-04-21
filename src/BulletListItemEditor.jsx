@@ -11,6 +11,12 @@
 import React from 'react';
 
 class BulletListItemEditor extends React.Component {
+  handleKeyDown (e) {
+    // handle return key differently
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  }
   render () {
     let containerStyle = {
       marginLeft: this.props.item.hierarchy + 'em'
@@ -18,11 +24,16 @@ class BulletListItemEditor extends React.Component {
     return (
       <div style={containerStyle}>
         <div>
-          <span>•</span><span>{this.props.item.content}</span>
+          <span>•</span>
+          <span
+            contentEditable="true"
+            onKeyDown={this.handleKeyDown.bind(this)}
+          >
+          </span>
         </div>
         <div>
-          {this.props.item.children.map((bulletListItem) => {
-            return <BulletListItemEditor item={bulletListItem} />;
+          {this.props.item.children.map((bulletListItem, i) => {
+            return <BulletListItemEditor key={i} item={bulletListItem} />;
           })}
         </div>
       </div>

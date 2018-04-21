@@ -1,7 +1,6 @@
-export function createBulletListItem(hierarchy, content = "") {
+export function createBulletListItem(hierarchy) {
   return {
     hierarchy,
-    content,
     children: [],
     isSelected: false,
   };
