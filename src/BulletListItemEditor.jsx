@@ -10,6 +10,8 @@
 
 import React from 'react';
 
+import { DRAG_STATES } from './constants';
+
 class BulletListItemEditor extends React.Component {
   constructor (props) {
     super(props);
@@ -52,6 +54,20 @@ class BulletListItemEditor extends React.Component {
     if (this.props.item.get('isSelected')) {
       innerItemStyle.backgroundColor = 'rgba(176, 196, 222, 0.5)';
     }
+    let dropUnderIndicatorStyle = {
+      height: '9px',
+      backgroundColor: 'SteelBlue',
+      opacity: '0.7',
+      width: '100%',
+      visibility: 'hidden',
+      borderRadius: '9px'
+    };
+    if (
+      this.props.dragState === DRAG_STATES.MOVE_SELECTION
+      && this.props.dropTarget === true
+    ) {
+      dropUnderIndicatorStyle.visibility = 'visible';
+    }
     return (
       <div
         style={containerStyle}
@@ -67,6 +83,7 @@ class BulletListItemEditor extends React.Component {
           >
           </span>
         </div>
+        <div style={dropUnderIndicatorStyle}></div>
       </div>
     );
   }

@@ -8,7 +8,8 @@ import {
   decreaseHierarchy,
   selectItem,
   deselectItem,
-  deselectAll
+  deselectAll,
+  moveSelectedTo
 } from './model';
 import { DRAG_STATES } from './constants'
 import BulletListItemEditor from './BulletListItemEditor.jsx';
@@ -31,7 +32,8 @@ class App extends Component {
         left: 0,
         height: 0,
         width: 0
-      }
+      },
+      dropTargetItem: null
     };
 
   }
@@ -91,7 +93,15 @@ class App extends Component {
    *  When mouse is pressed down on an item
    **/
   handleItemMouseDown (item) {
-    console.log("handleItemMouseDown");
+    let selectedItems = this.state.tree.filter((listItem) => {
+      return listItem.get('isSelected') === true;
+    });
+
+    if (selectedItems.includes(item)) {
+      this.setState({
+        dragState: DRAG_STATES.STARTING_MOVE_SELECTION
+      });
+    }
   }
 
   /**
@@ -102,9 +112,21 @@ class App extends Component {
     let newState = {
       dragState: DRAG_STATES.NONE
     };
-    if (this.state.dragState === DRAG_STATES.STARTING_NEW_SELECTION_BOX) {
-      // this means a click happened in the empty space
-      newState.tree = deselectAll(this.state.tree);
+    switch (this.state.dragState) {
+      case DRAG_STATES.STARTING_NEW_SELECTION_BOX:
+        // this means a click happened in the empty space
+        newState.tree = deselectAll(this.state.tree);
+        break;
+
+      case DRAG_STATES.MOVE_SELECTION:
+        newState.tree = moveSelectedTo(
+          this.state.tree,
+          this.state.dropTargetItem
+        );
+        break;
+      
+      default:
+        break;
     }
     this.setState(newState);
   }
@@ -170,15 +192,16 @@ class App extends Component {
     });
   }
 
+  /**
+   *  When a mousemove event comes from an item, this will be called. It is
+   *  used as a signal for when the selection should change.  TODO: this
+   *  is very buggy and doesn't account for the fact that the selection
+   *  range is always contiguous.
+   **/
   handleItemMouseMove (e, item) {
     if (this.state.dragState === DRAG_STATES.NEW_SELECTION_BOX) {
       // if we are dragging a selection box and passed over an item
       let bounds = e.currentTarget.getBoundingClientRect();
-
-      console.log("bounds");
-      console.log(bounds);
-      console.log("this.state.selectionBox");
-      console.log(this.state.selectionBox);
 
       // is list item inside selection box
       if (
@@ -205,11 +228,15 @@ class App extends Component {
           tree: deselectItem(this.state.tree, item)
         });
       }
+    } else if (this.state.dragState === DRAG_STATES.MOVE_SELECTION) {
+      this.setState({
+        dropTargetItem: item
+      });
     }
   }
 
   render() {
-    // TODO: probably shouldn't do so many binds
+    // TODO: probably shouldn't do so many binds in a large app
     return (
       <div
         className="App"
@@ -227,6 +254,9 @@ class App extends Component {
         />
         <section className="listEditor">
           {this.state.tree.map((bulletListItem, i) => {
+            let dropTarget = (
+              bulletListItem === this.state.dropTargetItem
+            );
             return <BulletListItemEditor
               key={i}
               item={bulletListItem}
@@ -234,6 +264,8 @@ class App extends Component {
               handleTabPressed={this.handleTabPressed.bind(this)}
               handleItemMouseDown={this.handleItemMouseDown.bind(this)}
               handleItemMouseMove={this.handleItemMouseMove.bind(this)}
+              dragState={this.state.dragState}
+              dropTarget={dropTarget}
             />;
           })}
         </section>

@@ -68,3 +68,19 @@ export function deselectAll (list) {
     return item.update('isSelected', isSelected => false);
   });
 }
+
+// dest item needs not be a selected item
+export function moveSelectedTo (list, destItem) {
+  let selectedItems = list.filter((listItem) => {
+    return listItem.get('isSelected') === true;
+  });
+  let notSelectedItems = list.filter((listItem) => {
+    return listItem.get('isSelected') === false;
+  });
+
+  let destIndex = findItemIndex(notSelectedItems, destItem);
+  let left = notSelectedItems.slice(0, destIndex + 1);
+  let right = notSelectedItems.slice(destIndex + 1);
+  return left.concat(selectedItems, right);
+
+}
