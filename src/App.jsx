@@ -1,3 +1,13 @@
+/**
+ *  @file       App.jsx
+ *
+ *
+ *  @author     Colin Sullivan <colin [at] colin-sullivan.net>
+ *
+ *  @copyright  2018 Colin Sullivan
+ *  @license    Licensed under the MIT license.
+ **/
+
 import React, { Component } from 'react';
 import './App.css';
 
@@ -112,6 +122,7 @@ class App extends Component {
     let newState = {
       dragState: DRAG_STATES.NONE
     };
+
     switch (this.state.dragState) {
       case DRAG_STATES.STARTING_NEW_SELECTION_BOX:
         // this means a click happened in the empty space
